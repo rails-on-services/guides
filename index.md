@@ -18,6 +18,7 @@ This guide is a basic intro to the IAM service which provides platform user auth
 <br/><br/>
 
 ---
+<br/><br/>
 [Cognito](cognito.html)
 
 This guide is a basic intro to the Cognito service which provides tenant user authentication and user pools
@@ -32,6 +33,7 @@ This guide describes the functionality provided by the core gem
 <br/><br/>
 
 ---
+<br/><br/>
 [Platform Services](services.html)
 
 This guide describes the services provided by the platform out of the box
