@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Configuring
-permalink: '/configuring.html'
+permalink: /configuring.html
 # date:   2019-03-21 20:40:06 +0800
 # categories: configuration
 ---
@@ -14,12 +14,28 @@ permalink: '/configuring.html'
 
 [x]confirm that iam, cognito, etc when running use the partition_name perx
 
+
+### Service Settings
+
+In the core gems in config/settings.yml are the defaults
+
+{% highlight yaml %}
+config:
+  hosts: whistler-api.perxtech.org
+{% endhighlight %}
+
+### Override with Environment variables
+
+Core uses the [config gem](https://github.com/railsconfig/config) to expose Platform configuration
+
 List of ENVs to export for compose:
 {% highlight bash %}
 export RAILS_MASTER_KEY=
 export PLATFORM__SERVICE__PARTITION_NAME=perx
 export PLATFORM__JWT__ISS=perx
 {% endhighlight %}
+
+### Configuration in a Service
 
 {% highlight ruby %}
 Settings.config.hosts = ['whistler-api.perxtech.org']

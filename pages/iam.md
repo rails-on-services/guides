@@ -3,13 +3,17 @@ layout: page
 title: IAM
 permalink: '/iam.html'
 ---
-## Getting Started with IAM
-
+<div class="summary" markdown="1">
+<br/>
 After reading this guide, you will know:
 
-<b>How to install Rails on Services, create a new Rails on Services project, and connect your application to a database.
-The general layout of a Rails on Services project.
-How to quickly generate the starting pieces of a Rails on Services project.</b>
+<b>How to use the IAM Service, create a new Tenant, and create an IAM user with API credentials.</b>
+
+<b>The use of JWTs in the authentication process.</b>
+
+<b>How to implement Fine grained permissions to platform resources in a Rails on Services project.</b>
+<br/><br/>
+</div>
 
 
 
@@ -20,8 +24,7 @@ How to quickly generate the starting pieces of a Rails on Services project.</b>
 
 
 
-### JWT
-
+### JWT:
 iss: is https://iam.perxtech.net
 aud: array of valid processors of the token; IAM issues the token; the aud is ["https://perxtech.net”]; so if survey.perxtech.net receives a token from a client, it checks the aud
 See: https://stackoverflow.com/questions/28418360/jwt-json-web-token-audience-aud-versus-client-id-whats-the-difference

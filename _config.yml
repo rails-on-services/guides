@@ -8,6 +8,14 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
 
+# Apply this change to _config.yml file
+kramdown:
+  # parse markdown inside block-level HTML tag
+  parse_block_html: true
+
+header_pages:
+  - about.md
+
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
@@ -16,14 +24,16 @@
 title: Rails On Services Guides
 email: rjayroach@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Rails On Services is a convention over configuration implementation of core micorservices
-  designed to support a single or multi tenant business application with one click
-  deployment to AWS, GCP or Azure
+  Rails On Services is an implementation of core micorservices designed to support a single
+  or multi tenant API driven business application.
+  Inspired by Rails, it offers a convention over configuration approach to microservice projects 
+  including one click deployment to AWS, GCP and Azure so you can focus on buiding business value
+
 # baseurl: "" # the subpath of your site, e.g. /blog
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
 url: "http://guides.rails-on-services.org"
-twitter_username: jekyllrb
-github_username:  jekyll
+twitter_username: rjayroach
+github_username:  rjayroach
 
 # Build settings
 markdown: kramdown

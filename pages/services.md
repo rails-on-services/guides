@@ -3,13 +3,17 @@ layout: page
 title: Services
 permalink: /services.html
 ---
-## Platform Services
-
+<div class="summary" markdown="1">
+<br/>
 After reading this guide, you will know:
 
-<b>How to install Rails on Services, create a new Rails on Services project, and connect your application to a database.
-The general layout of a Rails on Services project.
-How to quickly generate the starting pieces of a Rails on Services project.</b>
+<b>How to install Rails on Services, create a new Rails on Services project, and connect your application to a database.</b>
+
+<b>The general layout of a Rails on Services project.</b>
+
+<b>How to quickly generate the starting pieces of a Rails on Services project.</b>
+<br/><br/>
+</div>
 
 
 Before production
