@@ -161,8 +161,8 @@ By default two tenants are created in every service which schma names 111_111_11
 
 [x]Get gem's seeds working in enclosing app
 
-### 10 What's Next?(#whats-next)
-Now that you have a basic Ros project, the next step is to setup services to build out the infrastructure
+### [10 What's Next?](#whats-next)
+Now that you have a basic Ros project, the next step is to setup [services](services.html) to build out the infrastructure
 
 Remember you don't have to do everything without help. As you need assistance getting up and running with Rails, feel free to consult these support resources:
 
