@@ -73,29 +73,70 @@ By following along with this guide, you'll create a Rails on Services project ca
 gem install ros
 {% endhighlight %}
 
-#### [3.2 Creating the Store Project](#creating-the-store-project)
+#### [3.2 Creating the Blog Project](#creating-the-blog-project)
 
 {% highlight bash %}
-ros new 'project_name'
+ros new blog
 {% endhighlight %}
 
-### 4 Hello, Rails!
+### 4 Hello, Ros!
 
-To begin with, let's get some text up on screen quickly. To do this, you need to get your Rails application server running.
+To begin with, let's create an IAM User and access the list of users from Postman
 
-#### 4.1 Starting up the Web Server
+{% highlight bash %}
+ros init iam
+{% endhighlight %}
 
-You actually have a functional Rails application already. To see it, you need to start a web server on your development machine. You can do this by running the following in the blog directory:
+This will seed the database with two tenants each with a root account and a User with `Administrator` policy attached. Each tenant has a nine digit `account_id`.
 
-#### 4.2 Say "Hello", Rails
+The two development tenants have `account_id` 111111111 and 222222222
 
-To get Rails saying "Hello", you need to create at minimum a controller and a view.
+#### 4.1 Starting the IAM Service
 
-A controller's purpose is to receive specific requests for the application. Routing decides which controller receives which requests. Often, there is more than one route to each controller, and different routes can be served by different actions. Each action's purpose is to collect information to provide it to a view.
+You actually have a functional IAM service already. To see it, you need to start a web server on your development machine. You can do this by running the following in the ros-iam directory:
 
-A view's purpose is to display this information in a human readable format. An important distinction to make is that it is the controller, not the view, where information is collected. The view should just display that information. By default, view templates are written in a language called eRuby (Embedded Ruby) which is processed by the request cycle in Rails before being sent to the user.
+{% highlight bash %}
+rails c
+{% endhighlight %}
 
-To create a new controller, you will need to run the "controller" generator and tell it you want a controller called "Welcome" with an action called "index", just like this:
+#### 4.2 Navigating the Tenants
+
+When you seeded the IAM database `db/seeds/development/data.seeds.rb` two tenants were created and a User with credentials
+
+Go to rails console
+
+{% highlight ruby %}
+[1] [iam][development][public] pry(main)> st
+1 111_111_111
+2 222_222_222
+[2] [iam][development][public] pry(main)> st 2
+[3] [iam][development][222_222_222] pry(main)> uf
+=> #<User id: 1, console: true, api: true, time_zone: "Asia/Singapore", attached_policies: {"AdministratorAccess"=>1}, attached_actions: {}, username: "Admin_2", created_at: "2019-03-18 18:51:41", updated_at: "2019-03-18 18:51:41">
+{% endhighlight %}
+
+In the above console output, the first thing to notice is the prompt. The values in brackets are `[service name][Rails environment][current tenant's account_id]`
+
+Next is the alias command `st` which is short for `switch-tenant`. Invoking this command without a parameter will lists all tenants.
+When passed a parameter of the  index value of the tenant as in `st 2` then the tenant with index 2 is selected. In this case it is the tenant
+with `account_id` 222_222_222
+
+Next is the command `uf` which is short for `User.first`. The core gem creates shortcut methods for all models in a service using the first letter of the model name and a second letter which can be:
+f - first
+l - last
+a - all
+c - create; create will invoke the Factory to create a new object
+
+To access the list of ros console commands available type
+{% highlight ruby %}
+help ros
+{% endhighlight %}
+
+
+#### 4.2 Viewing the IAM Users with Postman
+
+Create a Postman team; commit code to repository; CI will auto generate OpenAPI V3 documentation which can be used by Postman as a collection.
+
+
 
 <!---
 [x]Dockerfile/compose in gems which mounts the current directory

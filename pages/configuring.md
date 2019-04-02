@@ -2,44 +2,59 @@
 layout: page
 title: Configuring
 permalink: /configuring.html
-# date:   2019-03-21 20:40:06 +0800
-# categories: configuration
 ---
-## Configuring Rails On Services
+<div class="summary" markdown="1">
+<br/>
 
+After reading this guide, you will know:
+
+<b>How to configure a new service</b>
+
+<b>How to override default Service settings</b>
+
+<b>How to settings for a Kubernetes deployment</b>
+<br/><br/>
+</div>
 
 [ros gems](https://github.com/rails-on-services/ros)
 
-### URN
+Core uses the [config gem](https://github.com/railsconfig/config) to expose Platform configuration
 
-[x]confirm that iam, cognito, etc when running use the partition_name perx
+### [Platform Settings](#platform-settings)
 
-
-### Service Settings
-
-In the core gems in config/settings.yml are the defaults
+In the core gem in config/settings.yml are the default values
 
 {% highlight yaml %}
-config:
-  hosts: whistler-api.perxtech.org
+partition: ros
+region: ''
+service:
+  name: iam
+  policy_name: Iam
+
+{% endhighlight %}
+
+### Configuration in a Service
+
+{% highlight ruby %}
+Settings.service.name = ['whistler-api.perxtech.org']
 {% endhighlight %}
 
 ### Override with Environment variables
-
-Core uses the [config gem](https://github.com/railsconfig/config) to expose Platform configuration
 
 List of ENVs to export for compose:
 {% highlight bash %}
 export RAILS_MASTER_KEY=
 export PLATFORM__SERVICE__PARTITION_NAME=perx
 export PLATFORM__JWT__ISS=perx
+export PLATFORM__HOSTS = whistler-api.perxtech.org,another-host-name
 {% endhighlight %}
 
-### Configuration in a Service
+### URN
 
-{% highlight ruby %}
-Settings.config.hosts = ['whistler-api.perxtech.org']
-{% endhighlight %}
+`URN` is short for universal resource name
+
+[x]confirm that iam, cognito, etc when running use the partition_name perx
+
 
 <!---
 To add new posts, simply add a file in the `_posts` directory that follows the convention `YYYY-MM-DD-name-of-post.ext` and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.
