@@ -134,6 +134,19 @@ help ros
 
 #### 4.2 Viewing the IAM Users with Postman
 
+Start the server
+
+Get credentials
+
+Use Postman to hit the server
+
+Check the ~/.ros/credentials file
+
+set the ROS_PROFILE env var and use the SDK to Access IAM Users
+
+Notice the attached_permissions hash
+
+### 5. Boot all servers using docker-compose
 
 <!---
 [x]Dockerfile/compose in gems which mounts the current directory
@@ -145,7 +158,21 @@ help ros
 []add a .env file for the version number of the image, etc. push to perx docker hub
 --->
 
-### Endpoint Generator
+
+### 6. Create a New Service
+
+ros g service inventory
+
+Updates docker-compose, nginx, etc
+
+#### 6.3 Add Model to the SDK
+
+Add it and then start the SDK; Check out service_endpoints, etc
+
+
+### 7. Create an Endpoint for the New Service
+
+  Endpoint Generator
 
 [x]use the endpoint generator to generate a campaign in survey app
 

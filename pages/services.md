@@ -15,16 +15,22 @@ After reading this guide, you will know:
 * TOC
 {:toc}
 
-### 1. CI/CD Configuration
+
+### 1. Setup a Cloud Development Server
+
+ros 
+
+
+### 2. CI/CD Configuration
 
 NOTE: Here the Postman API key is important and is configurable
 
-### 2. Developer Tooling
+### 3. Developer Tooling
 
 Create a Postman team; commit code to repository; CI will auto generate OpenAPI V3 documentation which can be used by Postman as a collection.
 
 
-#### [2.1 Create a Postman Team](#create-a-postman-team)
+#### [3.1 Create a Postman Team](#create-a-postman-team)
 
 As part of the CI/CD process all API documentation will be written and pushed to a Postman team
 
