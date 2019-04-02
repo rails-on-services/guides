@@ -137,6 +137,19 @@ help ros
 Create a Postman team; commit code to repository; CI will auto generate OpenAPI V3 documentation which can be used by Postman as a collection.
 
 
+### [How to Get Started with Postman](getting-started-postman)
+
+rails app:ros:doc
+output written to app_root/tmp/docs
+
+https://github.com/postmanlabs/openapi-to-postman
+postman schema docs: https://schema.getpostman.com/
+
+POST to url 'https://api.getpostman.com/collections'
+
+with API KEY
+
+
 
 <!---
 [x]Dockerfile/compose in gems which mounts the current directory
