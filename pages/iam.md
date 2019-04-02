@@ -15,6 +15,8 @@ After reading this guide, you will know:
 <br/><br/>
 </div>
 
+* TOC
+{:toc}
 
 
 [x]Implement policies and actions in jsonb in IAM and serialize to services

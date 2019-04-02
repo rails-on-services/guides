@@ -73,10 +73,10 @@ By following along with this guide, you'll create a Rails on Services project ca
 gem install ros
 {% endhighlight %}
 
-#### [3.2 Creating the Blog Project](#creating-the-blog-project)
+#### [3.2 Creating the Store Project](#creating-the-store-project)
 
 {% highlight bash %}
-ros new blog
+ros new store
 {% endhighlight %}
 
 ### 4 Hello, Ros!
@@ -134,22 +134,6 @@ help ros
 
 #### 4.2 Viewing the IAM Users with Postman
 
-Create a Postman team; commit code to repository; CI will auto generate OpenAPI V3 documentation which can be used by Postman as a collection.
-
-
-### [How to Get Started with Postman](getting-started-postman)
-
-rails app:ros:doc
-output written to app_root/tmp/docs
-
-https://github.com/postmanlabs/openapi-to-postman
-postman schema docs: https://schema.getpostman.com/
-
-POST to url 'https://api.getpostman.com/collections'
-
-with API KEY
-
-
 
 <!---
 [x]Dockerfile/compose in gems which mounts the current directory
@@ -176,3 +160,9 @@ The core provides a default seed data for development for each of the services.
 By default two tenants are created in every service which schma names 111_111_111 and 222_222_222
 
 [x]Get gem's seeds working in enclosing app
+
+### 10 What's Next?(#whats-next)
+Now that you have a basic Ros project, the next step is to setup services to build out the infrastructure
+
+Remember you don't have to do everything without help. As you need assistance getting up and running with Rails, feel free to consult these support resources:
+

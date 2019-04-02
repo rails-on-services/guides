@@ -16,6 +16,9 @@ After reading this guide, you will know:
 <br/><br/>
 </div>
 
+* TOC
+{:toc}
+
 [ros gems](https://github.com/rails-on-services/ros)
 
 Core uses the [config gem](https://github.com/railsconfig/config) to expose Platform configuration

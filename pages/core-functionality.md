@@ -14,6 +14,9 @@ After reading this guide, you will know:
 <br/><br/>
 </div>
 
+* TOC
+{:toc}
+
 
 ### Application Controller
 
