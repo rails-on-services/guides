@@ -37,12 +37,12 @@ Building on Kubernetes, provides out of the box services, including:
 
 | Service | Description |
 | ------------- | ------------- |
-| [IAM Service](iam.html) | Platform Identity and Access Managment |
-| [Cognito Service](cognito.html) | Application Users and Groups |
-| [Communication Service](comm.html) | Integration with 3rd party providers such as [AWS](https://aws.amazon.com) and [Twilio](https://twilio.com) for SMS, Email, etc |
-| [Storage Service](storage.html) | File Managment for browser based uploads and SFTP |
-| [Callback Service](callback.html) | Realtime notification services |
-| [Billing Service](billing.html) | Provides metered billing of business services and payment processing via [Stripe](https://www.stripe.com) |
+| [IAM](iam.html) | Platform Identity and Access Managment |
+| [Cognito](cognito.html) | Application Users and Groups |
+| [Communication](comm.html) | Integration with 3rd party providers such as [AWS](https://aws.amazon.com) and [Twilio](https://twilio.com) for SMS, Email, etc |
+| [Storage](storage.html) | File Managment for browser based uploads and SFTP |
+| [Callback](callback.html) | Realtime notification services |
+| [Billing](billing.html) | Provides metered billing of business services and payment processing via [Stripe](https://www.stripe.com) |
 
 
 In addition to the core business services, Rails on Services provides the tooling necessary to stand up your project's services in Kubernetes with out of the box support for major [CNCF](https://www.cncf.io) services:
