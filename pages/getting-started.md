@@ -35,24 +35,25 @@ Rails on Services is a project paradigm that provides the typical infrastructure
 
 Building on Kubernetes, provides out of the box services, including:
 
-Platform Identity and Access Managment provided by the [IAM Service](iam.html)
+| Service | Description |
+| ------------- | ------------- |
+| [IAM Service](iam.html) | Platform Identity and Access Managment |
+| [Cognito Service](cognito.html) | Application Users and Groups |
+| [Communication Service](comm.html) | Integration with 3rd party providers such as [AWS](https://aws.amazon.com) and [Twilio](https://twilio.com) for SMS, Email, etc |
+| [Storage Service](storage.html) | File Managment for browser based uploads and SFTP |
+| [Callback Service](callback.html) | Realtime notification services |
+| [Billing Service](billing.html) | Provides metered billing of business services and payment processing via [Stripe](https://www.stripe.com) |
 
-Application Users and Groups provided by the [Cognito Service](cognito.html)
-
-Communications Integration with leading providers AWS and [Twilio](https://twilio.com) provided by the [Communication Service](comm.html)
-
-File Managment for browser based uploads and SFTP provided by the [Storage Service](storage.html)
-
-Realtime notification services provided by the [Callback Service](callback.html)
-
-Billing services that allow your business services to provide metered billing provided by the [Billing Service](billing.html) with chargeback services from [Stripe](https://www.stripe.com)
 
 In addition to the core business services, Rails on Services provides the tooling necessary to stand up your project's services in Kubernetes with out of the box support for major [CNCF](https://www.cncf.io) services:
 
-- [Prometheus](https://prometheus.io) monitoring of all services
-- [Istio](https://istio.io) and [Envoy Proxy](https://www.envoyproxy.io) to provide a service mesh for reliable communications between your services
-- [Grafana](https://grafana.com) for metric reporting and visulization
-- [Fluentd](https://www.fluentd.org) for logging
+| Service | Description |
+| ------------- | ------------- |
+| [Prometheus](https://prometheus.io) | Collection of services statistics |
+| [Istio](https://istio.io) | Provides a service mesh [Envoy Proxy](https://www.envoyproxy.io) for reliable communications between services |
+| [Grafana](https://grafana.com) | Metric reporting and visulization for monitoring |
+| [Fluentd](https://www.fluentd.org) | Service and request logging |
+
 
 Rails on Services provides Terraform code to deploy all the necessary infrastructure out of the box
 
@@ -69,9 +70,7 @@ By following along with this guide, you'll create a Rails on Services project ca
 
 #### [3.1 Installing Rails on Services](#installing-rails-on-services)
 
-{% highlight bash %}
-gem install ros
-{% endhighlight %}
+Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup)
 
 #### [3.2 Creating the Acme Company Platform](#creating-the-acme-company-platform)
 
