@@ -3,6 +3,11 @@ layout: page
 title: Getting Started with Rails On Services
 permalink: /getting-started.html
 ---
+
+Getting Started with Rails On Services
+======================================
+
+
 <div class="summary" markdown="1">
 <br/><br/>
 After reading this guide, you will know:
@@ -18,6 +23,11 @@ After reading this guide, you will know:
 
 * TOC
 {:toc}
+
+--------------------------------------------------------------------------------
+
+Guide Assumptions
+-----------------
 
 ### 1 Guide Assumptions
 

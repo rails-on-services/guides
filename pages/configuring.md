@@ -6,7 +6,7 @@ permalink: /configuring.html
 <div class="summary" markdown="1">
 <br/>
 
-After reading this guide, you will know:
+Hi After reading this guide, you will know:
 
 <b>How to configure a new service</b>
 
