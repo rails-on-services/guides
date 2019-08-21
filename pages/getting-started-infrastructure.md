@@ -7,7 +7,6 @@ permalink: /getting-started-infrastructure.html
 Getting Started with Infrastructure
 ======================================
 
-
 <div class="summary" markdown="1">
 <br/><br/>
 After reading this guide, you will know:
@@ -21,6 +20,10 @@ After reading this guide, you will know:
 <br/><br/>
 </div>
 
+<div class="summary" markdown="1">
+<b>In following guide we'll learn to extend ROS CLI with Google Cloud Platform infrastructure provider based on existing AWS provider</b>
+</div>
+
 * TOC
 {:toc}
 
@@ -32,29 +35,69 @@ The best way to read this guide is to follow it step by step. All steps are esse
 
 #### [1.1 Installing Rails on Services](#installing-rails-on-services)
 
-Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup)
+Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup) and complete [Virtual Mashine Setup](https://github.com/rails-on-services/setup#virtual-machine-setup) section to launch development environment.
 
-### [2 Creating a new Provider](#creating-a-new-provider)
+Once Vagrant is up and running your current project folder is mounted into VM. You can use a text editor of your choice on Host OS and run ROS CLI commands on virtual machine to test your changes.
 
-#### [2.1 Terraform](#terraform)
+Enter ```your-project-name/ros``` folder and clone existing ROS repo. We'll use it as an example.
+{% highlight bash %}
+cd your-project-name/ros
+git clone https://github.com/rails-on-services/ros.git
+{% endhighlight %}
+
+Your folder structure in ```your-project-name/ros``` should look like below and further will be referenced as root folder.
+{% highlight bash %}
+.
+├── cli
+├── guides
+├── images
+├── ros
+└── setup
+{% endhighlight %}
+
+### [2 ROS configuration files explanation](#config-file-explanation)
+Enter ```ros/config``` folder. Which contents looks like that:
+{% highlight bash %}
+.
+├── deployment.yml
+├── deployments
+│   ├── development.yml
+│   ├── production.yml
+│   └── test.yml
+└── environment.yml
+{% endhighlight %}
+
+```deployment.yml``` is a master configuration file which values applies to any deployment managed by ROS CLI.
+
+Deployment configuration files in ```deployments``` folder will override any values defined in ```deployment.yml```.
+
+Deployment configuration file usage determined by ```ROS_ENV``` environmental variable passed to ROS CLI upon runtime.
+
+Default deployment configuration file is  ```development.yml``` if no ```ROS_ENV``` been set.
+
+Setting ```ROS_ENV=test``` tell ROS CLI to use ```test.yml``` config.
+
+### [3 Creating a new Provider](#creating-a-new-provider)
+<!--
+#### [3.1 Terraform](#terraform)
 
 We use terraform for infra providers blah blah
 
 look at the gcp provider. Our goal is to create a new provider based on this one.
 
+-->
+#### [3.1 Start with creating a config file](#start-with-a-copy)
 
-#### [2.2 Start with a copy of existing provider](#start-with-a-copy)
+We will create an GKE instance with a VPC
 
-We will create an instance with a VPC, dns, etc
-
-1. Create a profile configuration from an existing configuration:
+* Create a profile configuration file:
 
 {% highlight bash %}
 cd config/deployments
-cp development-gcp.yml development-your-provider.yml
+touch gcp.yml
 {% endhighlight %}
 
-2. Set the values in the config file
+* Set the values in the config file
 
 {% highlight yaml %}
 components:
@@ -67,12 +110,19 @@ components:
         components:
           vpc:
             config:
-              provider: your-provider
+              provider: gcp   #other supported types: azure, oracle
+              name: my-test-vpc
+              subnet: '10.100.0.0/16'
+          gci:
+            config:
+              provider: gcp
+              name: my-test-instance
+              machine_type: 'f1-micro'
 {% endhighlight %}
 
-Note: Values are exposed as variables in the template your-provider-main.tf
+_Note: Config values are exposed as variables in the template your-provider-main.tf_
 
-3. Create your TF modules
+* Create your TF modules
 
 
 
