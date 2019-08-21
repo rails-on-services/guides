@@ -6,6 +6,8 @@ Rails on Services Guides
 
 These guides are designed to make you immediately productive with Rails, and to help you understand how all of the pieces fit together.
 
+[Getting Started with Rails on Services infrastructure](getting-started-infrastructure.html)
+
 ## Start Here
 
 [Getting Started with Rails on Services](getting-started.html)
