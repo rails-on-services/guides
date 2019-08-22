@@ -7,7 +7,6 @@ permalink: /getting-started-infrastructure.html
 Getting Started with Infrastructure
 ======================================
 
-
 <div class="summary" markdown="1">
 <br/><br/>
 After reading this guide, you will know:
@@ -21,6 +20,10 @@ After reading this guide, you will know:
 <br/><br/>
 </div>
 
+<div class="summary" markdown="1">
+<b>In following guide we'll learn to extend ROS CLI with Google Cloud Platform infrastructure provider based on existing AWS provider</b>
+</div>
+
 * TOC
 {:toc}
 
@@ -32,29 +35,72 @@ The best way to read this guide is to follow it step by step. All steps are esse
 
 #### [1.1 Installing Rails on Services](#installing-rails-on-services)
 
-Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup)
+Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup) and complete [Virtual Mashine Setup](https://github.com/rails-on-services/setup#virtual-machine-setup) section to launch development environment.
 
-### [2 Creating a new Provider](#creating-a-new-provider)
+Once Vagrant is up and running your current project folder is mounted into VM. You can use a text editor of your choice on Host OS and run ROS CLI commands on virtual machine to test your changes.
 
-#### [2.1 Terraform](#terraform)
+Enter ```your-project-name/ros``` folder and clone existing ROS repo. We'll use it as an example.
+{% highlight bash %}
+cd your-project-name/ros
+git clone https://github.com/rails-on-services/ros.git
+{% endhighlight %}
+
+Your folder structure in ```your-project-name/ros``` should look like below and further will be referenced as root folder.
+{% highlight bash %}
+.
+├── cli
+├── guides
+├── images
+├── ros
+└── setup
+{% endhighlight %}
+
+### [2 ROS configuration files explanation](#config-file-explanation)
+Enter ```ros/config``` folder. Which contents looks like that:
+{% highlight bash %}
+.
+├── deployment.yml
+├── deployments
+│   ├── development.yml
+│   ├── production.yml
+│   └── test.yml
+└── environment.yml
+{% endhighlight %}
+
+```deployment.yml``` is a master configuration file which values applies to any deployment managed by ROS CLI.
+
+Deployment configuration files in ```deployments``` folder will override any values defined in ```deployment.yml```.
+
+Deployment configuration file usage determined by ```ROS_ENV``` environmental variable passed to ROS CLI upon runtime.
+
+Default deployment configuration file is  ```development.yml``` if no ```ROS_ENV``` been set.
+
+Setting ```ROS_ENV=test``` tell ROS CLI to use ```test.yml``` config.
+
+### [3 Creating a new Provider](#creating-a-new-provider)
+<!--
+#### [3.1 Terraform](#terraform)
 
 We use terraform for infra providers blah blah
 
 look at the gcp provider. Our goal is to create a new provider based on this one.
 
+-->
 
-#### [2.2 Start with a copy of existing provider](#start-with-a-copy)
+We use terraform for infrastructure providers.
 
-We will create an instance with a VPC, dns, etc
+In following example we will create an GKE instance with a VPC.
 
-1. Create a profile configuration from an existing configuration:
+#### [3.1 Start with creating a config file](#start-with-config)
+
+* **Create a profile configuration file**
 
 {% highlight bash %}
 cd config/deployments
-cp development-gcp.yml development-your-provider.yml
+touch gcp.yml
 {% endhighlight %}
 
-2. Set the values in the config file
+* **Set the values in the config file**
 
 {% highlight yaml %}
 components:
@@ -65,21 +111,118 @@ components:
           cluster:
             type: instance
         components:
+          provider_settings:
+            config:
+              provider: gcp
+              region: us-central1
+              zone: us-central1-a
+              project: 'my-project-name'
+              credentials_file: 'path/to/credentials.json'
           vpc:
             config:
-              provider: your-provider
+              provider: gcp         #other supported types: azure, oracle
+              vpc_name: my-test-vpc
+              subnet_name: my-test-subnet
+              cidr: '10.100.0.0/16'
+          instance:
+            config:
+              provider: gcp
+              name: my-test-instance
+              machine_type: 'f1-micro'
+              disk_image: 'debian-cloud/debian-9'
+          dns:
+            config:
+              provider: gcp
 {% endhighlight %}
 
-Note: Values are exposed as variables in the template your-provider-main.tf
+_Note on empty `dns` module declaration. This is to override default dns settings declared in deployment.yml_
 
-3. Create your TF modules
+Config values from your-provider.yml are exposed as variables in the template your-provider-main.tf
 
+### [3.2 Create your TF template](#create-tf-template)
 
+We are done with editing ROS project for now. Lets go back to our project root folder and update CLI project.
+
+Terraform temlpates stored at `cli/lib/ros/be/infra/templates/terraform/`
+{% highlight bash %}
+cd cli/lib/ros/be/infra/templates/terraform/
+mkdir gcp   #folder name should match our provider name set in gcp.yml
+touch gcp/instance.tf.erb
+{% endhighlight %}
+
+Following template is sufficient to generate corect `main.tf` file.
+Note on ERB variables declaration as `tf.component.config.value`
+
+{% highlight terraform %}
+provider "google" {
+  credentials = "${file("<%= tf.provider_settings.config.credentials_file %>")}"
+  project     = "<%= tf.provider_settings.config.project %>"
+  region      = "<%= tf.provider_settings.config.region %>"
+}
+
+module "vpc" {
+  source              = "./gcp/vpc"
+  vpc_name            = "<%= tf.vpc.config.vpc_name %>"
+  create_subnetworks  = false  
+  subnet_name         = "<%= tf.vpc.config.subnet_name %>"
+  cidr                = "<%= tf.vpc.config.cidr %>"
+}
+
+module "gci" {
+  source       = "./gcp/gci"
+  name         = "<%= tf.instance.config.name %>"
+  machine_type = "<%= tf.instance.config.machine_type %>"
+  disk_image   = "<%= tf.instance.config.disk_image %>"
+  zone         = "<%= tf.provider_settings.config.zone %>"
+  subnetwork   = module.vpc.subnetwork.self_link
+}
+{% endhighlight %}
+
+### [ 3.3 Create Terraform configuration files](#create-tf-config)
+
+Terraform configuration files stored at `cli/lib/ros/be/infra/files/terraform
+{% highlight bash %}
+cd cli/lib/ros/be/infra/files/terraform/
+mkdir gcp   #folder name should match our provider name set in gcp.yml
+mkdir gcp/gci gcp/vpc gcp/dns
+{% endhighlight %}
+
+Put your terraform resource declaration files, variables and outputs into corresponding folders.
+Examples can be found in `cli/lib/ros/be/infra/files/terraform/provider_name`
+
+### [4 Set components mapping](#set provider mapping)
+
+As final touch, we set components (declared in gcp.yml) mapping to terraform modules mapping in our template generator.
+{% highlight bash %}
+vim cli/lib/ros/be/infra/generator.rb
+{% endhighlight %}
+
+Update gcp type with following values:
+
+{% highlight ruby%}
+def gcp(type)
+  {
+    vpc: 'vpc',
+    instance: 'gci'
+  }[type]
+end
+{% endhighlight %}
 
 ### [5 Stand up the infrastructure](#standup-the-infrastructure)
 
+So far you should be able to launch simple infrastructure consists of single VPC and GCI.
 
-{% highlight bash %}
-ros generate:be:application:infra
-ros be infra up
-{% endhighlight %}
+Go back to root folder. Enter `ros` folder.
+
+Initialise the project
+`ros be init`
+
+Generate Terraform scripts out of your templates
+`ros generate:be:infra`
+
+Apply your Terraform infrastructure plan
+`ros be infra apply`
+
+Use `-v` and/or `-n` for verbosity and/or dry-run respectively.
+
+Use `ros be infra help` to find out commands description.
