@@ -67,12 +67,12 @@ tree ~ -L 3
 |   |   |-- Rakefile
 |   |   |-- README.md
 |   |   |-- ros
-|   |   '-- VERSION
+|   |   `-- VERSION
 |   '-- ros
 |   |   |-- cli
 |   |   |-- guides
 |   |   |-- images
-|   |   '-- setup
+|   |   `-- setup
 |   |-- Vagrantfile
 {% endhighlight %}
 
@@ -80,12 +80,14 @@ tree ~ -L 3
 The `~/my-project/my-platform/ros/config` directory has the following contents:
 {% highlight bash %}
 .
-├── deployment.yml
-├── deployments
-│   ├── development.yml
-│   ├── production.yml
-│   └── test.yml
-└── environment.yml
+|-- deployments
+|   |-- development-specs.yml
+|   |-- development.yml
+|   |-- gcp.yml
+|   |-- production.yml
+|   `-- test.yml
+|-- deployment.yml
+`-- environment.yml
 {% endhighlight %}
 
 `deployment.yml` is a master configuration file which values applies to any deployment managed by ROS CLI.
@@ -118,7 +120,7 @@ In following example we will create an GKE instance with a VPC.
 
 {% highlight bash %}
 cd ~/my-project/my-platform/ros/config/deployments
-touch gcp.yml
+cp gcp.yml your-provider.yml
 {% endhighlight %}
 
 * **Set the values in the config file**
@@ -211,6 +213,57 @@ mkdir gcp/gci gcp/vpc gcp/dns
 Put your terraform resource declaration files, variables and outputs into corresponding folders.
 Examples can be found in `~/my-project/ros/cli/lib/ros/be/infra/files/terraform/provider_name`
 
+### [ 3.4 Working examples of Terraform provider files](#working-examples)
+
+For reference, here is what the aws and gcp providers content looks like.
+In the `files` directory there is a set of files for each infrastructure component
+In the `templates` directory there is a single ERB template file for each infra deployment type: `instance` or `kubernetes`
+
+{% highlight bash %}
+~/my-project/ros/cli/lib/ros/be/infra$ tree files templates
+files
+`-- terraform
+    |-- aws
+    |   |-- acm
+    |   |   |-- main.tf
+    |   |   |-- outputs.tf
+    |   |   `-- variables.tf
+    |   |-- ec2
+    |   |   |-- locals.tf
+    |   |   |-- main.tf
+    |   |   |-- outputs.tf
+    |   |   |-- templates
+    |   |   |   |-- userdata-debian.tpl
+    |   |   |   `-- userdata-ubuntu.tpl
+    |   |   `-- variables.tf
+    |   |-- eks
+    |   |   `-- main.tf
+    |   |-- route53
+    |   |   |-- main.tf
+    |   |   |-- outputs.tf
+    |   |   `-- variables.tf
+    |   `-- vpc
+    |       |-- main.tf
+    |       |-- outputs.tf
+    |       `-- variables.tf
+    `-- gcp
+        |-- gci
+        |   |-- main.tf
+        |   |-- outputs.tf
+        |   `-- variables.tf
+        `-- vpc
+            |-- main.tf
+            |-- outputs.tf
+            `-- variables.tf
+templates
+`-- terraform
+    |-- aws
+    |   |-- instance.tf.erb
+    |   `-- kubernetes.tf.erb
+    `-- gcp
+        `-- instance.tf.erb
+{% endhighlight %}
+
 ### [4 Set components mapping](#set provider mapping)
 
 As final touch, we set components (declared in gcp.yml) mapping to terraform modules mapping in our template generator.
@@ -231,22 +284,28 @@ end
 
 ### [5 Stand up the infrastructure](#standup-the-infrastructure)
 
-So far you should be able to launch simple infrastructure consists of single VPC and GCI.
 
-Go back to root folder. Enter `ros` folder.
 
-Initialise the project
-`cd ~/my-project/my-platform/ros`
-`ros be init`
+You should now be able to launch simple infrastructure consisting of a single VPC and GCI:
+
+{% highlight bash %}
+cd ~/my-project/my-platform/ros
+{% endhighlight %}
 
 Generate Terraform scripts out of your templates
-`ros generate:be:infra`
+{% highlight bash %}
+ros generate:be:infra
+{% endhighlight %}
 
 Generate the Terraform plan
-`ros be infra plan`
+{% highlight bash %}
+ros be infra plan
+{% endhighlight %}
 
 Apply your Terraform infrastructure plan
-`ros be infra apply`
+{% highlight bash %}
+ros be infra apply
+{% endhighlight %}
 
 Use `-v` and/or `-n` for verbosity and/or dry-run respectively.
 
