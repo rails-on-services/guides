@@ -160,17 +160,19 @@ components:
 
 _Note on empty `dns` module declaration. This is to override default dns settings declared in deployment.yml_
 
-Config values from your-provider.yml are exposed as variables in the template your-provider-main.tf
+Config values from `your-provider.yml` are exposed as variables in the template `your-provider-main.tf`
+
+Edit this file and add the variables and values that are required to configure your provider's infrastructure.
 
 ### [3.2 Create your TF template](#create-tf-template)
 
 We are done with editing ROS project for now. Lets go back to our project root folder and update CLI project.
 
-Terraform temlpates stored at `~/my-project/ros/cli/lib/ros/be/infra/templates/terraform/`
+Terraform temlpates stored at `~/my-project/ros/cli/lib/ros/be/infra/templates/terraform`
 {% highlight bash %}
-cd ~/my-project/ros/cli/lib/ros/be/infra/templates/terraform/
-mkdir gcp   # NOTE: folder name *must* match your provider name set in gcp.yml
-touch gcp/instance.tf.erb
+cd ~/my-project/ros/cli/lib/ros/be/infra/templates/terraform
+mkdir your-provider   # NOTE: folder name *must* match your provider name set in your-provider.yml
+touch your-provider/instance.tf.erb
 {% endhighlight %}
 
 Following template is sufficient to generate a correct `main.tf` file.
@@ -206,12 +208,13 @@ module "gci" {
 Terraform configuration files stored at `cli/lib/ros/be/infra/files/terraform
 {% highlight bash %}
 cd ~/my-project/ros/cli/lib/ros/be/infra/files/terraform/
-mkdir gcp   # NOTE: folder name *must* match your provider name set in gcp.yml
-mkdir gcp/gci gcp/vpc gcp/dns
+mkdir your-provider   # NOTE: folder name *must* match your provider name set in your-provider.yml
+cd your-provider
+mkdir instance-type vpc dns
 {% endhighlight %}
 
-Put your terraform resource declaration files, variables and outputs into corresponding folders.
-Examples can be found in `~/my-project/ros/cli/lib/ros/be/infra/files/terraform/provider_name`
+Now put your terraform resource declaration files, variables and outputs into corresponding folders.
+Examples are shown below and can be found in `~/my-project/ros/cli/lib/ros/be/infra/files/terraform/{gcp, aws}`
 
 ### [ 3.4 Working examples of Terraform provider files](#working-examples)
 
