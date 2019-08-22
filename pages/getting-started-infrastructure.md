@@ -35,28 +35,49 @@ The best way to read this guide is to follow it step by step. All steps are esse
 
 #### [1.1 Installing Rails on Services](#installing-rails-on-services)
 
-Rails on Services is currently under heavy development. We have a separate repo for setting up the project. Please see [Setup](https://github.com/rails-on-services/setup) and complete [Virtual Mashine Setup](https://github.com/rails-on-services/setup#virtual-machine-setup) section to launch development environment.
+Rails on Services is currently under heavy development. We have a separate repo for setting up the project.
+Please see [Setup](https://github.com/rails-on-services/setup) and complete:
 
-Once Vagrant is up and running your current project folder is mounted into VM. You can use a text editor of your choice on Host OS and run ROS CLI commands on virtual machine to test your changes.
+1. [Virtual Mashine Setup](https://github.com/rails-on-services/setup#virtual-machine-setup) section to launch development environment
+2. [Verify VM Configuration](https://github.com/rails-on-services/setup#verify-vm-configuration)
 
-Enter ```your-project-name/ros``` folder and clone existing ROS repo. We'll use it as an example.
+Once Vagrant is up and running, the directory from which you ran `vagrant ssh` is mounted in the VM.
+You can use a text editor of your choice on Host OS and run ROS CLI commands on the VM to test your changes.
+
+**All subsequent commands are executed in the VM**
+
+Assuming that you ran `vagrant ssh` from your host OS dir of `~/my-project` and you have just exected `vagrant ssh` so in the VM:
+
 {% highlight bash %}
-cd your-project-name/ros
-git clone https://github.com/rails-on-services/ros.git
+cd my-project
+ros new my-platform
+cd my-platform
+ros be init
 {% endhighlight %}
 
-Your folder structure in ```your-project-name/ros``` should look like below and further will be referenced as root folder.
+Your folder structure in the VM should look like below and further will be referenced as root folder.
 {% highlight bash %}
+tree ~ -L 3
 .
-├── cli
-├── guides
-├── images
-├── ros
-└── setup
+|-- my-project
+|   |-- my-platform
+|   |   |-- ansible.cfg
+|   |   |-- avp
+|   |   |-- config
+|   |   |-- Rakefile
+|   |   |-- README.md
+|   |   |-- ros
+|   |   '-- VERSION
+|   '-- ros
+|   |   |-- cli
+|   |   |-- guides
+|   |   |-- images
+|   |   '-- setup
+|   |-- Vagrantfile
 {% endhighlight %}
 
 ### [2 ROS configuration files explanation](#config-file-explanation)
-Enter ```ros/config``` folder. Which contents looks like that:
+The `~/my-project/my-platform/ros/config` directory has the following contents:
 {% highlight bash %}
 .
 ├── deployment.yml
@@ -67,15 +88,15 @@ Enter ```ros/config``` folder. Which contents looks like that:
 └── environment.yml
 {% endhighlight %}
 
-```deployment.yml``` is a master configuration file which values applies to any deployment managed by ROS CLI.
+`deployment.yml` is a master configuration file which values applies to any deployment managed by ROS CLI.
 
-Deployment configuration files in ```deployments``` folder will override any values defined in ```deployment.yml```.
+Deployment configuration files in `deployments` folder will override any values defined in `deployment.yml`.
 
-Deployment configuration file usage determined by ```ROS_ENV``` environmental variable passed to ROS CLI upon runtime.
+Deployment configuration file usage determined by `ROS_ENV` environmental variable passed to ROS CLI upon runtime.
 
-Default deployment configuration file is  ```development.yml``` if no ```ROS_ENV``` been set.
+Default deployment configuration file is  `development.yml` if no `ROS_ENV` been set.
 
-Setting ```ROS_ENV=test``` tell ROS CLI to use ```test.yml``` config.
+Setting `ROS_ENV=test` tell ROS CLI to use `test.yml` config.
 
 ### [3 Creating a new Provider](#creating-a-new-provider)
 <!--
@@ -96,7 +117,7 @@ In following example we will create an GKE instance with a VPC.
 * **Create a profile configuration file**
 
 {% highlight bash %}
-cd config/deployments
+cd ~/my-project/my-platform/ros/config/deployments
 touch gcp.yml
 {% endhighlight %}
 
@@ -143,14 +164,14 @@ Config values from your-provider.yml are exposed as variables in the template yo
 
 We are done with editing ROS project for now. Lets go back to our project root folder and update CLI project.
 
-Terraform temlpates stored at `cli/lib/ros/be/infra/templates/terraform/`
+Terraform temlpates stored at `~/my-project/ros/cli/lib/ros/be/infra/templates/terraform/`
 {% highlight bash %}
-cd cli/lib/ros/be/infra/templates/terraform/
-mkdir gcp   #folder name should match our provider name set in gcp.yml
+cd ~/my-project/ros/cli/lib/ros/be/infra/templates/terraform/
+mkdir gcp   # NOTE: folder name *must* match your provider name set in gcp.yml
 touch gcp/instance.tf.erb
 {% endhighlight %}
 
-Following template is sufficient to generate corect `main.tf` file.
+Following template is sufficient to generate a correct `main.tf` file.
 Note on ERB variables declaration as `tf.component.config.value`
 
 {% highlight terraform %}
@@ -182,19 +203,19 @@ module "gci" {
 
 Terraform configuration files stored at `cli/lib/ros/be/infra/files/terraform
 {% highlight bash %}
-cd cli/lib/ros/be/infra/files/terraform/
-mkdir gcp   #folder name should match our provider name set in gcp.yml
+cd ~/my-project/ros/cli/lib/ros/be/infra/files/terraform/
+mkdir gcp   # NOTE: folder name *must* match your provider name set in gcp.yml
 mkdir gcp/gci gcp/vpc gcp/dns
 {% endhighlight %}
 
 Put your terraform resource declaration files, variables and outputs into corresponding folders.
-Examples can be found in `cli/lib/ros/be/infra/files/terraform/provider_name`
+Examples can be found in `~/my-project/ros/cli/lib/ros/be/infra/files/terraform/provider_name`
 
 ### [4 Set components mapping](#set provider mapping)
 
 As final touch, we set components (declared in gcp.yml) mapping to terraform modules mapping in our template generator.
 {% highlight bash %}
-vim cli/lib/ros/be/infra/generator.rb
+vim ~/my-project/ros/cli/lib/ros/be/infra/generator.rb
 {% endhighlight %}
 
 Update gcp type with following values:
@@ -215,10 +236,14 @@ So far you should be able to launch simple infrastructure consists of single VPC
 Go back to root folder. Enter `ros` folder.
 
 Initialise the project
+`cd ~/my-project/my-platform/ros`
 `ros be init`
 
 Generate Terraform scripts out of your templates
 `ros generate:be:infra`
+
+Generate the Terraform plan
+`ros be infra plan`
 
 Apply your Terraform infrastructure plan
 `ros be infra apply`
