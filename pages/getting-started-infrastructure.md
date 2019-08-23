@@ -139,11 +139,11 @@ components:
               provider: gcp
               region: us-central1
               zone: us-central1-a
-              project: 'my-project-name'
+              project: 'google-project-name'
               credentials_file: 'path/to/credentials.json'
           vpc:
             config:
-              provider: gcp         #other supported types: azure, oracle
+              provider: gcp         # other supported types: azure, oracle
               vpc_name: my-test-vpc
               subnet_name: my-test-subnet
               cidr: '10.100.0.0/16'
@@ -152,11 +152,15 @@ components:
               provider: gcp
               name: my-test-instance
               machine_type: 'f1-micro'
-              disk_image: 'debian-cloud/debian-9'
+              disk_image: 'debian'        # ubuntu or debian
+              project_name: my-project    # path to ROS project on instance ~/my-project/ros
+              ssh_public_key: '~/.ssh/id_rsa.pub'  # local path to SSH public key
           dns:
             config:
               provider: gcp
 {% endhighlight %}
+
+_Note that execution will fail if `ssh_public_key` file doesn't exist_
 
 _Note on empty `dns` module declaration. This is to override default dns settings declared in deployment.yml_
 
@@ -164,7 +168,7 @@ Config values from `your-provider.yml` are exposed as variables in the template 
 
 Edit this file and add the variables and values that are required to configure your provider's infrastructure.
 
-### [3.2 Create your TF template](#create-tf-template)
+#### [3.2 Create your TF template](#create-tf-template)
 
 We are done with editing ROS project for now. Lets go back to our project root folder and update CLI project.
 
@@ -194,16 +198,18 @@ module "vpc" {
 }
 
 module "gci" {
-  source       = "./gcp/gci"
-  name         = "<%= tf.instance.config.name %>"
-  machine_type = "<%= tf.instance.config.machine_type %>"
-  disk_image   = "<%= tf.instance.config.disk_image %>"
-  zone         = "<%= tf.provider_settings.config.zone %>"
-  subnetwork   = module.vpc.subnetwork.self_link
+  source         = "./gcp/gci"
+  name           = "<%= tf.instance.config.name %>"
+  machine_type   = "<%= tf.instance.config.machine_type %>"
+  disk_image     = "<%= tf.instance.config.disk_image %>"
+  zone           = "<%= tf.provider_settings.config.zone %>"
+  subnetwork     = module.vpc.subnetwork.self_link
+  project_name   = "<%= tf.instance.config.project_name %>"
+  ssh_public_key = "${file("<%= tf.instance.config.ssh_public_key %>")}"
 }
 {% endhighlight %}
 
-### [ 3.3 Create Terraform configuration files](#create-tf-config)
+#### [ 3.3 Create Terraform configuration files](#create-tf-config)
 
 Terraform configuration files stored at `cli/lib/ros/be/infra/files/terraform
 {% highlight bash %}
@@ -216,11 +222,14 @@ mkdir instance-type vpc dns
 Now put your terraform resource declaration files, variables and outputs into corresponding folders.
 Examples are shown below and can be found in `~/my-project/ros/cli/lib/ros/be/infra/files/terraform/{gcp, aws}`
 
-### [ 3.4 Working examples of Terraform provider files](#working-examples)
+#### [ 3.4 Working examples of Terraform provider files](#working-examples)
 
 For reference, here is what the aws and gcp providers content looks like.
 In the `files` directory there is a set of files for each infrastructure component
 In the `templates` directory there is a single ERB template file for each infra deployment type: `instance` or `kubernetes`
+
+Note on instance startup templates. `userdata-{debian, ubuntu}.tpl` for AWS and `startup-script.tpl` for GCP.
+Those rendered to instance startup scripts that performs ROS CLI configuration on remote instance.
 
 {% highlight bash %}
 ~/my-project/ros/cli/lib/ros/be/infra$ tree files templates
@@ -250,10 +259,13 @@ files
     |       |-- outputs.tf
     |       `-- variables.tf
     `-- gcp
-        |-- gci
-        |   |-- main.tf
-        |   |-- outputs.tf
-        |   `-- variables.tf
+        ├── dns
+        ├── gci
+        │   ├── main.tf
+        │   ├── outputs.tf
+        │   ├── templates
+        │   │   `-- startup-script.tpl
+        │   └── variables.tf
         `-- vpc
             |-- main.tf
             |-- outputs.tf
@@ -287,8 +299,6 @@ end
 
 ### [5 Stand up the infrastructure](#standup-the-infrastructure)
 
-
-
 You should now be able to launch simple infrastructure consisting of a single VPC and GCI:
 
 {% highlight bash %}
@@ -307,9 +317,16 @@ ros be infra plan
 
 Apply your Terraform infrastructure plan
 {% highlight bash %}
-ros be infra apply
+ros be infra apply -v
+{% endhighlight %}
+
+Destroy your Terraform infrastructure plan
+{% highlight bash %}
+ros be infra destroy -v
 {% endhighlight %}
 
 Use `-v` and/or `-n` for verbosity and/or dry-run respectively.
+
+Always run in verbose mode `apply` and `destroy` commands.
 
 Use `ros be infra help` to find out commands description.
